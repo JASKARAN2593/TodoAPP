@@ -1,0 +1,142 @@
+﻿
+
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .container {
+            max-width: 2000px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        table {
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 28px;
+            text-align: left;
+            border-bottom: 5px solid #ddd;
+            border-top: 5px solid #ddd;
+            border-left: 5px solid #ddd;
+            border-right: 5px solid #ddd;
+        }
+
+        form {
+            display: inline-block;
+            margin-bottom: 2px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+
+        a {
+            display: inline-flex;
+            margin-top: 5px;
+            text-decoration: underline;
+            background-color: #f44336;
+            color: white;
+            padding: 10px 10px;
+            border-radius: 4px;
+        }
+
+            a:hover {
+                background-color: #d32f2f;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hi, {{ current_user.username }}! Here's your active ToDo list</h1>
+
+        <h2>Task List</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Label</th>
+                    <th>Reminder</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>{{ task.status }}</td>
+                    <td>{{ task.priority }}</td>
+                    <td>{{ task.label }}</td>
+                    <td>{{ task.reminder }}</td>
+                    <td>
+                        <form action="{{ url_for('update') }}" method="post">
+                            <input type="hidden" name="task_id" value="{{ task.id }}">
+                            <select name="status">
+                                <option value="Pending" {% if task.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                            </select>
+                            <input type="submit" value="Update">
+                        </form>
+                        <a href="{{ url_for('delete', task_id=task.id) }}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Add New Task</h2>
+        <form action="{{ url_for('add') }}" method="post">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea name="description" id="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="priority">Priority:</label>
+                <select name="priority" id="priority">
+                    <option value="Normal">Normal</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="label">Label:</label>
+                <select name="Label" id="Label">
+                    <option value="L-1">L-1</option>
+                    <option value="L-2">L-2</option>
+                    <option value="L-3">L-3</option>
+                    <option value="L-4">L-4</option>
+                    <option value="L-5">L-5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="reminder">Reminder:</label>
+                <input type="datetime-local" name="reminder" id="reminder">
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add">
+            </div>
+        </form>
+        <div></div>
+       <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</body>
+</html>
