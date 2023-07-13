@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
@@ -50,8 +51,17 @@ def index():
 def add():
     title = request.form.get('title')
     description = request.form.get('description')
+    status = request.form.get('status')
+    label = request.form.get('label')
+    reminder = request.form.get('reminder')
 
-    task = Task(title=title, description=description, user_id=current_user.id)
+    #Converting reminder string to datetime object
+
+    reminder_datetime = datetime.fromisoformat(reminder)
+
+
+    task = Task(title=title, description=description, status=status, label=label, reminder=reminder_datetime, user_id=current_user.id)
+
     db.session.add(task)
     db.session.commit()
 
